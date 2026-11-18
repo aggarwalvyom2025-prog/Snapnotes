@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoteSnap – Snap your chapter, get instant notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14213d;--paper:#f3f6ff;--line:#dbe2f3;--muted:#5b6785;--blue:#2b59ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.7 "Source Serif 4",Georgia,serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+h1,h2,h3,button,label,.step b{font-family:"Bricolage Grotesque",system-ui,sans-serif}
+header{padding:14px 5vw;background:linear-gradient(90deg,#2b59ff,#9c36b5,#e4572e);color:#fff;font:800 1.35rem "Bricolage Grotesque",sans-serif}
+main{max-width:860px;margin:0 auto;padding:0 5vw 50px}
+.hero{margin-top:26px;padding:40px 22px;text-align:center;border-radius:22px;border:1px solid var(--line);background:radial-gradient(circle at 12% 15%,#ffe45e66,transparent 40%),radial-gradient(circle at 88% 25%,#2b59ff33,transparent 45%),radial-gradient(circle at 50% 100%,#e4572e2e,transparent 55%),#fff}
+.hero h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.1;margin:0 0 10px;font-weight:800}
+.hero p{color:var(--muted);margin:0 auto;max-width:32em}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:18px 0}
+.step{background:#fff;border:1px solid var(--line);border-top:6px solid var(--c);border-radius:14px;padding:14px 16px}
+.step b{color:var(--c)}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin-top:18px;box-shadow:0 8px 24px #14213d0f}
+.card h2{margin:0 0 6px}
+label{display:block;margin-top:14px;font-weight:700}
+input[type=text],input[type=email],select{width:100%;padding:12px;margin-top:6px;font:inherit;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px #2b59ff22}
+button{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:13px 22px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:18px}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.6;cursor:wait}
+button.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);margin:0}
+button.link{background:none;color:var(--blue);padding:0;margin:0 0 0 8px;text-decoration:underline;font-size:.95rem;font-weight:500}
+.msg{min-height:1.5em;color:#c92a2a;margin:8px 0 0}
+.drop{display:block;margin-top:14px;padding:30px 16px;border:3px dashed var(--blue);border-radius:16px;text-align:center;cursor:pointer;background:#f3f6ff;font-weight:700}
+.drop.over{background:#2b59ff18}
+.drop small{display:block;color:var(--muted);font-weight:400}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.thumbs img{width:64px;height:84px;object-fit:cover;border-radius:8px;border:2px solid var(--line)}
+.spin{display:none;align-items:center;gap:10px;margin-top:14px;font-weight:600}
+.spin i{width:22px;height:22px;border:4px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.banner{background:linear-gradient(135deg,var(--blue),#9c36b5);color:#fff;border-radius:18px;padding:22px 24px;margin:22px 0 4px}
+.banner h1{margin:0;font-size:clamp(1.5rem,4.5vw,2.1rem);line-height:1.2}
+.sec{background:#fff;border:1px solid color-mix(in srgb,var(--s) 30%,#fff);border-top:6px solid var(--s);border-radius:16px;padding:8px 22px 14px;margin:30px 0 24px}
+.sec h2,.sec h3{display:inline-block;margin:-22px 0 8px;padding:5px 16px;background:var(--s);color:#fff;border-radius:99px;font-size:1.05rem;box-shadow:0 4px 10px color-mix(in srgb,var(--s) 35%,transparent)}
+.sec li::marker{color:var(--s)}
+.sec strong{background:color-mix(in srgb,var(--s) 22%,#fff);border-bottom:2px solid var(--s);padding:0 4px;border-radius:4px}
+table{border-collapse:collapse;width:100%;margin:10px 0}
+.sec th{background:var(--s);color:#fff}
+td,th{border:1px solid var(--line);padding:7px 10px;text-align:left}
+footer{text-align:center;color:var(--muted);padding:20px}
+@media print{header,footer,#ui,#out .actions{display:none!important}.sec{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>📚 NoteSnap</header>
+<main>
+  <div id="ui">
+    <section class="hero">
+      <h1>Snap your chapter.<br>Get instant notes.</h1>
+      <p>Upload photos of your textbook pages and get colourful study notes in under a minute.</p>
+    </section>
+
+    <div class="steps">
+      <div class="step" style="--c:#2b59ff"><b>1. Register</b><br>Tell us your name, school and standard.</div>
+      <div class="step" style="--c:#e4572e"><b>2. Upload</b><br>Add photos of your chapter pages.</div>
+      <div class="step" style="--c:#2f9e5b"><b>3. Study</b><br>Read, copy or print your notes.</div>
+    </div>
+
+    <!-- Registration -->
+    <div id="register" class="card" style="display:none">
+      <h2>Register first</h2>
+      <p>Please tell us who you are before making notes.</p>
+      <form id="regForm">
+        <label for="name">Your name</label>
+        <input type="text" id="name" maxlength="60" required>
+        <label for="email">Email address</label>
+        <input type="email" id="email" maxlength="100" required>
+        <label for="standard">Standard</label>
+        <select id="standard" required>
+          <option value="">Choose your standard</option>
+          <option>Class 1</option><option>Class 2</option><option>Class 3</option>
+          <option>Class 4</option><option>Class 5</option><option>Class 6</option>
+          <option>Class 7</option><option>Class 8</option><option>Class 9</option>
+          <option>Class 10</option><option>Class 11</option><option>Class 12</option>
+          <option>College</option>
+        </select>
+        <label for="school">School name</label>
+        <input type="text" id="school" maxlength="100" required>
+        <button type="submit" id="regBtn">Register and continue</button>
+        <p class="msg" id="regStatus"></p>
+      </form>
+    </div>
+
+    <!-- Upload -->
+    <div id="app" class="card" style="display:none">
+      <p style="margin-top:0"><strong id="hello"></strong> <button class="link" id="switch">Not you? Register again</button></p>
+      <label class="drop" id="drop">
+        <input type="file" id="files" accept="image/*" multiple hidden>
+        <span id="dropText">📷 Tap to choose photos or take one with your camera</span>
+        <small>Up to 10 pages. JPG, PNG or WebP.</small>
+      </label>
+      <div class="thumbs" id="thumbs"></div>
+      <button id="go">✨ Make my notes</button>
+      <div class="spin" id="spin"><i></i><span>Reading your pages... this can take up to a minute.</span></div>
+      <p class="msg" id="status"></p>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div id="out" style="display:none">
+    <div id="notes"></div>
+    <div class="actions">
+      <button class="ghost" id="copy">📋 Copy notes</button>
+      <button class="ghost" id="print">🖨️ Print / Save as PDF</button>
+      <button class="ghost" id="again">➕ Make more notes</button>
+    </div>
+  </div>
+</main>
+<footer>© NoteSnap. Made for students.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const KEY = 'notesnap_student';
+const COLORS = ['#2b59ff','#e4572e','#2f9e5b','#9c36b5','#d9480f','#0c8599','#d6336c','#5f3dc4'];
+let student = null, picked = [];
+try { student = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+
+function showRegister(msg) {
+  $('register').style.display = 'block';
+  $('app').style.display = 'none';
+  $('regStatus').textContent = msg || '';
+}
+function showApp() {
+  $('register').style.display = 'none';
+  $('app').style.display = 'block';
+  $('hello').textContent = 'Hello, ' + student.name + '!';
+}
+function forget() { localStorage.removeItem(KEY); student = null; }
+
+async function start() {
+  if (!student) return showRegister();
+  try {
+    const r = await fetch('/me', { headers: { 'x-student-id': student.id } });
+    if (r.status === 401) { forget(); return showRegister('Please register again.'); }
+  } catch (e) { /* server problem: show the app anyway */ }
+  showApp();
+}
+
+// Registration
+$('regForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('regBtn').disabled = true;
+  $('regStatus').textContent = '';
+  try {
+    const res = await fetch('/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: $('name').value, email: $('email').value,
+        standard: $('standard').value, school: $('school').value,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Could not register.');
+    student = { id: json.id, name: json.name };
+    localStorage.setItem(KEY, JSON.stringify(student));
+    showApp();
+  } catch (err) {
+    $('regStatus').textContent = err.message;
+  }
+  $('regBtn').disabled = false;
+});
+$('switch').onclick = () => { forget(); showRegister(); };
+
+// Choosing photos
+function setFiles(list) {
+  picked = [...list].filter((f) => f.type.startsWith('image/')).slice(0, 10);
+  $('thumbs').innerHTML = '';
+  picked.forEach((f) => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    img.alt = f.name;
+    $('thumbs').appendChild(img);
+  });
+  $('dropText').textContent = picked.length
+    ? '✅ ' + picked.length + ' photo(s) chosen. Tap to change'
+    : '📷 Tap to choose photos or take one with your camera';
+}
+$('files').onchange = () => setFiles($('files').files);
+['dragover', 'dragenter'].forEach((n) => $('drop').addEventListener(n, (e) => { e.preventDefault(); $('drop').classList.add('over'); }));
+['dragleave', 'drop'].forEach((n) => $('drop').addEventListener(n, () => $('drop').classList.remove('over')));
+$('drop').addEventListener('drop', (e) => { e.preventDefault(); setFiles(e.dataTransfer.files); });
+
+// Turn the notes into colourful cards
+function showNotes(markdown) {
+  const box = document.createElement('div');
+  box.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
+  const out = document.createElement('div');
+  let sec = null, n = 0;
+  [...box.childNodes].forEach((node) => {
+    const t = node.nodeName;
+    if (t === 'H1') {
+      const b = document.createElement('div');
+      b.className = 'banner';
+      b.appendChild(node);
+      out.appendChild(b);
+      sec = null;
+      return;
+    }
+    if (t === 'H2' || t === 'H3') {
+      sec = document.createElement('section');
+      sec.className = 'sec';
+      sec.style.setProperty('--s', COLORS[n++ % COLORS.length]);
+      out.appendChild(sec);
+    }
+    (sec || out).appendChild(node);
+  });
+  $('notes').innerHTML = '';
+  $('notes').appendChild(out);
+  $('ui').style.display = 'none';
+  $('out').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+// Make notes
+$('go').onclick = async () => {
+  if (!picked.length) { $('status').textContent = 'Choose at least one photo first.'; return; }
+  const data = new FormData();
+  picked.forEach((f) => data.append('pages', f));
+
+  $('go').disabled = true;
+  $('status').textContent = '';
+  $('spin').style.display = 'flex';
+  try {
+    const res = await fetch('/notes', { method: 'POST', headers: { 'x-student-id': student.id }, body: data });
+    const json = await res.json();
+    if (res.status === 401) { forget(); showRegister('Please register again.'); return; }
+    if (!res.ok) throw new Error(json.error);
+    showNotes(json.notes);
+  } catch (err) {
+    $('status').textContent = err.message;
+  } finally {
+    $('spin').style.display = 'none';
+    $('go').disabled = false;
+  }
+};
+
+$('copy').onclick = async () => {
+  await navigator.clipboard.writeText($('notes').innerText);
+  $('copy').textContent = '✅ Copied';
+  setTimeout(() => ($('copy').textContent = '📋 Copy notes'), 1500);
+};
+$('print').onclick = () => window.print();
+$('again').onclick = () => {
+  $('out').style.display = 'none';
+  $('ui').style.display = 'block';
+  setFiles([]);
+  window.scrollTo(0, 0);
+};
+
+start();
+</script>
+</body>
+</html>
